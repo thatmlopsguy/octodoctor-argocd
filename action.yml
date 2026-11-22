@@ -12,8 +12,11 @@ inputs:
     description: "Lowest severity of a failed rule that fails the step: high, medium or none"
     default: medium
   version:
-    description: octodoctor release to download, for example v0.5.0
-    default: v0.5.0
+    description: octodoctor release to download, for example v0.6.0
+    default: v0.6.0
+  config-file:
+    description: "Configuration file with the failures to ignore (default: .octodoctor.yaml in the working directory, if it exists)"
+    default: ""
 
 runs:
   using: composite
@@ -47,4 +50,11 @@ runs:
       env:
         DIRECTORY: ${{ inputs.directory }}
         FAIL_ON: ${{ inputs.fail-on }}
-      run: '"$RUNNER_TEMP/octodoctor/octodoctor" -d "$DIRECTORY" --fail-on "$FAIL_ON"'
+        CONFIG_FILE: ${{ inputs.config-file }}
+      run: |
+        set -euo pipefail
+        args=(-d "$DIRECTORY" --fail-on "$FAIL_ON")
+        if [ -n "$CONFIG_FILE" ]; then
+          args+=(--config "$CONFIG_FILE")
+        fi
+        "$RUNNER_TEMP/octodoctor/octodoctor" "${args[@]}"

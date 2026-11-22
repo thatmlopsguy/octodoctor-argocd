@@ -256,10 +256,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: OctopusDeploy/octodoctor-argocd@v0.5.0
+      - uses: OctopusDeploy/octodoctor-argocd@v0.6.0
         with:
           directory: argocd
           fail-on: high
+          config-file: .octodoctor.yaml
 
       - uses: actions/upload-artifact@v4
         if: always()
@@ -272,7 +273,8 @@ jobs:
 |---|---|---|
 | `directory` | `.` | Directory to scan for Argo CD files |
 | `fail-on` | `medium` | Lowest severity of a failed rule that fails the step: `high`, `medium` or `none` |
-| `version` | the action version | OctoDoctor release to download, for example `v0.5.0` |
+| `version` | the action version | OctoDoctor release to download, for example `v0.6.0` |
+| `config-file` | `.octodoctor.yaml` in the working directory, if it exists | [Configuration file](#ignoring-rules) with the failures to ignore |
 
 The `if: always()` line uploads the report even when the OctoDoctor step fails, so you can see which
 rules failed.
